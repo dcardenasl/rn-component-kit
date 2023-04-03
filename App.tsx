@@ -33,7 +33,10 @@ function App(): JSX.Element {
   const _section = (): JSX.Element => (
     <View style={{flex: 1, alignItems: 'center'}}>
       <CustomButton
+        // disabled={true}
+        // loading={true}
         style={styles.btn}
+        backgroundColor={'red'}
         onPress={() => {
           refModal.current?.open();
         }}>
@@ -53,6 +56,7 @@ function App(): JSX.Element {
           }}>
           <CustomButton
             style={styles.btn}
+            backgroundColor={'red'}
             onPress={() => {
               refModal.current?.close();
             }}>
@@ -91,7 +95,6 @@ const styles = StyleSheet.create({
     width: '70%',
     borderRadius: 20,
     marginVertical: '5%',
-    backgroundColor: 'red',
   },
   text: {color: 'white', fontWeight: 'bold'},
 });

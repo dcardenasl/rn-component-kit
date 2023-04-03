@@ -5,6 +5,7 @@ import {
   ViewStyle,
   TextStyle,
 } from 'react-native';
+import {ColorTypes} from '../CustomModal';
 
 // CustomButtonProps interface defines the prop types for the CustomButton component
 interface CustomButtonProps {
@@ -13,6 +14,7 @@ interface CustomButtonProps {
   disabled?: boolean; // Optional boolean to disable the button
   style?: ViewStyle | TextStyle; // Optional custom styles for the button container
   loading?: boolean; // Optional boolean to show the loading state of the button
+  backgroundColor?: ColorTypes;
 }
 
 const CustomButton: FC<CustomButtonProps> = ({
@@ -20,6 +22,7 @@ const CustomButton: FC<CustomButtonProps> = ({
   style,
   disabled,
   loading,
+  backgroundColor,
   onPress = () => {},
 }) => {
   // Define the button style based on the provided props
@@ -27,7 +30,7 @@ const CustomButton: FC<CustomButtonProps> = ({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: disabled ? 'rgba(0, 0, 0, 0.5)' : 'transparent',
+    backgroundColor: disabled ? 'grey' : backgroundColor,
   };
 
   // Loader component to show when the button is in loading state
@@ -36,7 +39,7 @@ const CustomButton: FC<CustomButtonProps> = ({
       testID="loader"
       animating={loading}
       size="large"
-      color={disabled ? undefined : 'grey'}
+      color={'white'}
     />
   );
 
