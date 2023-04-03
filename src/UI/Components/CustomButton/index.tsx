@@ -7,15 +7,26 @@ import {
 } from 'react-native';
 import {ColorTypes} from '../CustomModal';
 
-// CustomButtonProps interface defines the prop types for the CustomButton component
 interface CustomButtonProps {
-  children: ReactNode; // ReactNode to render inside the button
-  onPress?: () => void; // Function to execute when the button is pressed
-  disabled?: boolean; // Optional boolean to disable the button
-  style?: ViewStyle | TextStyle; // Optional custom styles for the button container
-  loading?: boolean; // Optional boolean to show the loading state of the button
+  children: ReactNode;
+  onPress?: () => void;
+  disabled?: boolean;
+  style?: ViewStyle | TextStyle;
+  loading?: boolean;
   backgroundColor?: ColorTypes;
 }
+
+/**
+ * Props for the CustomButton component.
+ *
+ * @typedef {object} CustomButtonProps
+ * @property {ReactNode} children - The content to render inside the button.
+ * @property {() => void} [onPress] - Function to execute when the button is pressed.
+ * @property {boolean} [disabled] - Whether the button should be disabled.
+ * @property {ViewStyle | TextStyle} [style] - Optional custom styles for the button container.
+ * @property {boolean} [loading] - Whether the button is in a loading state.
+ * @property {ColorTypes} [backgroundColor] - Optional color for the button background.
+ */
 
 const CustomButton: FC<CustomButtonProps> = ({
   children,
@@ -25,7 +36,6 @@ const CustomButton: FC<CustomButtonProps> = ({
   backgroundColor,
   onPress = () => {},
 }) => {
-  // Define the button style based on the provided props
   const btnStyle: ViewStyle = {
     flexDirection: 'row',
     alignItems: 'center',
@@ -33,7 +43,6 @@ const CustomButton: FC<CustomButtonProps> = ({
     backgroundColor: disabled ? 'grey' : backgroundColor,
   };
 
-  // Loader component to show when the button is in loading state
   const Loader = () => (
     <ActivityIndicator
       testID="loader"
@@ -44,7 +53,6 @@ const CustomButton: FC<CustomButtonProps> = ({
   );
 
   return (
-    // TouchableOpacity component to handle button interactions
     <TouchableOpacity
       activeOpacity={0.6}
       disabled={disabled || loading}
