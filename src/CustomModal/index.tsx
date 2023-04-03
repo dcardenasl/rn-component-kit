@@ -25,7 +25,7 @@ type CustomModalProps = {
   children?: ReactNode;
   closeOutside?: boolean;
   backgroundColor?: ColorTypes;
-  slideDirection?: 'up' | 'left';
+  slideDirection?: 'up' | 'left' | 'right' | 'down';
   customContentStyle?: ViewStyle;
 };
 
@@ -83,7 +83,7 @@ const CustomModal = React.forwardRef<RefModalObject, CustomModalProps>(
     const handleAnimationAtOpenModal = useCallback(() => {
       Animated.timing(animation, {
         toValue: 1,
-        duration: 500,
+        duration: durationAnimationsAtOpen[slideDirection],
         useNativeDriver: true,
       }).start();
     }, [animation]);
@@ -91,11 +91,25 @@ const CustomModal = React.forwardRef<RefModalObject, CustomModalProps>(
     const handleAnimationAtCloseModal = () => {
       Animated.timing(animation, {
         toValue: 0,
-        duration: 360,
+        duration: durationAnimationsAtClose[slideDirection],
         useNativeDriver: true,
       }).start(() => {
         setVisible(false);
       });
+    };
+
+    const durationAnimationsAtOpen = {
+      left: 300,
+      right: 300,
+      down: 500,
+      up: 500,
+    };
+
+    const durationAnimationsAtClose = {
+      left: 200,
+      right: 200,
+      down: 360,
+      up: 360,
     };
 
     const slideUp = {
@@ -104,6 +118,18 @@ const CustomModal = React.forwardRef<RefModalObject, CustomModalProps>(
           translateY: animation.interpolate({
             inputRange: [0.01, 1],
             outputRange: [height, 0],
+            extrapolate: 'clamp',
+          }),
+        },
+      ],
+    };
+
+    const slideDown = {
+      transform: [
+        {
+          translateY: animation.interpolate({
+            inputRange: [0.01, 1],
+            outputRange: [-height, 0],
             extrapolate: 'clamp',
           }),
         },
@@ -122,6 +148,18 @@ const CustomModal = React.forwardRef<RefModalObject, CustomModalProps>(
       ],
     };
 
+    const slideRight = {
+      transform: [
+        {
+          translateX: animation.interpolate({
+            inputRange: [0.01, 1],
+            outputRange: [-width, 0],
+            extrapolate: 'clamp',
+          }),
+        },
+      ],
+    };
+
     const bodyContentStyles = {
       flex: 1,
       marginHorizontal: 20,
@@ -130,6 +168,13 @@ const CustomModal = React.forwardRef<RefModalObject, CustomModalProps>(
       backgroundColor: backgroundColor,
       borderRadius: 20,
       maxHeight: height,
+    };
+
+    const slideAnimations = {
+      left: slideLeft,
+      right: slideRight,
+      down: slideDown,
+      up: slideUp,
     };
 
     return (
@@ -150,7 +195,7 @@ const CustomModal = React.forwardRef<RefModalObject, CustomModalProps>(
           <TouchableWithoutFeedback>
             <Animated.View
               style={[
-                slideDirection === 'left' ? slideLeft : slideUp,
+                slideAnimations[slideDirection],
                 bodyContentStyles,
                 customContentStyle,
               ]}

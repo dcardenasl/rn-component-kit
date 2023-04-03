@@ -1,10 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React, {useRef} from 'react';
 import {
   SafeAreaView,
@@ -16,22 +9,21 @@ import {
   View,
 } from 'react-native';
 
-import {Colors, Header} from 'react-native/Libraries/NewAppScreen';
-import CustomButton from './src/UI/Components/CustomButton';
-import CustomModal, {RefModalObject} from './src/UI/Components/CustomModal';
+import CustomButton from './src/CustomButton';
+import CustomModal, {RefModalObject} from './src/CustomModal';
 
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const refModal = useRef<RefModalObject>(null);
 
   const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+    backgroundColor: isDarkMode ? 'black' : 'white',
   };
 
   console.log('new Render');
 
   const _section = (): JSX.Element => (
-    <View style={{flex: 1, alignItems: 'center'}}>
+    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
       <CustomButton
         // disabled={true}
         // loading={true}
@@ -40,14 +32,14 @@ function App(): JSX.Element {
         onPress={() => {
           refModal.current?.open();
         }}>
-        <Text style={styles.text}>Texto de pruebas</Text>
+        <Text style={styles.text}>Abrir Modal</Text>
       </CustomButton>
     </View>
   );
 
   const _modals = (): JSX.Element => (
     <>
-      <CustomModal ref={refModal}>
+      <CustomModal ref={refModal} slideDirection={'right'}>
         <View
           style={{
             flex: 1,
@@ -60,7 +52,7 @@ function App(): JSX.Element {
             onPress={() => {
               refModal.current?.close();
             }}>
-            <Text style={styles.text}>Cerrar</Text>
+            <Text style={styles.text}>Cerrar Modal</Text>
           </CustomButton>
         </View>
       </CustomModal>
@@ -68,18 +60,19 @@ function App(): JSX.Element {
   );
 
   return (
-    <SafeAreaView style={backgroundStyle}>
+    <SafeAreaView style={[{flex: 1}, backgroundStyle]}>
       <StatusBar
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundStyle.backgroundColor}
       />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
+        style={backgroundStyle}
+        contentContainerStyle={{flex: 1}}>
         <View
           style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
+            flex: 1,
+            backgroundColor: isDarkMode ? 'black' : 'white',
           }}>
           {_section()}
         </View>
