@@ -13,21 +13,32 @@ import {
   Modal,
   ViewStyle,
   useWindowDimensions,
+  StyleProp,
+  ColorValue,
 } from 'react-native';
-
-type RGB = `rgb(${number}, ${number}, ${number})`;
-type RGBA = `rgba(${number}, ${number}, ${number}, ${number})`;
-type HEX = `#${string}`;
-
-export type ColorTypes = RGB | RGBA | HEX | string;
 
 type CustomModalProps = {
   children?: ReactNode;
   closeOutside?: boolean;
-  backgroundColor?: ColorTypes;
-  slideDirection?: 'up' | 'left' | 'right' | 'down';
-  customContentStyle?: ViewStyle;
+  backgroundColor?: ColorValue;
+  slideDirection?: 'up' | 'top' | 'left' | 'right' | 'down';
+  customContentStyle?: StyleProp<ViewStyle>;
 };
+type directionsDurationTypes = {
+  left: number;
+  right: number;
+  down: number;
+  up: number;
+  top: number;
+};
+
+interface SlideAnimationsTypes {
+  left: Animated.WithAnimatedValue<ViewStyle>;
+  right: Animated.WithAnimatedValue<ViewStyle>;
+  up: Animated.WithAnimatedValue<ViewStyle>;
+  down: Animated.WithAnimatedValue<ViewStyle>;
+  top: Animated.WithAnimatedValue<ViewStyle>;
+}
 
 export type RefModalObject = {
   open: () => void;
@@ -41,7 +52,7 @@ export type RefModalObject = {
  * @property {boolean} [closeOutside=true] - Whether the modal should close when the user clicks outside of it.
  * @property {ColorTypes} [backgroundColor='white'] - The background color of the modal.
  * @property {'up' | 'left'} [slideDirection='up'] - The direction from which the modal should slide in.
- * @property {ViewStyle} [customContentStyle] - Custom styles to apply to the modal content.
+ * @property {StyleProp<ViewStyle>} [customContentStyle] - Custom styles to apply to the modal content.
  *
  * @typedef {object} RefModalObject
  * @property {() => void} open - A function that opens the modal.
@@ -63,22 +74,9 @@ const CustomModal = React.forwardRef<RefModalObject, CustomModalProps>(
     },
     ref,
   ) => {
-    useImperativeHandle(ref, () => ({
-      open,
-      close,
-    }));
     const {width, height} = useWindowDimensions();
     const [visible, setVisible] = useState<boolean>(false);
     const animation = useRef(new Animated.Value(0)).current;
-
-    const open = () => {
-      setVisible(true);
-      handleAnimationAtOpenModal();
-    };
-
-    const close = () => {
-      handleAnimationAtCloseModal();
-    };
 
     const handleAnimationAtOpenModal = useCallback(() => {
       Animated.timing(animation, {
@@ -88,7 +86,7 @@ const CustomModal = React.forwardRef<RefModalObject, CustomModalProps>(
       }).start();
     }, [animation]);
 
-    const handleAnimationAtCloseModal = () => {
+    const handleAnimationAtCloseModal = useCallback(() => {
       Animated.timing(animation, {
         toValue: 0,
         duration: durationAnimationsAtClose[slideDirection],
@@ -96,23 +94,39 @@ const CustomModal = React.forwardRef<RefModalObject, CustomModalProps>(
       }).start(() => {
         setVisible(false);
       });
-    };
+    }, [animation, slideDirection]);
 
-    const durationAnimationsAtOpen = {
+    const open = useCallback(() => {
+      setVisible(true);
+      handleAnimationAtOpenModal();
+    }, [handleAnimationAtOpenModal]);
+
+    const close = useCallback(() => {
+      handleAnimationAtCloseModal();
+    }, [handleAnimationAtCloseModal]);
+
+    useImperativeHandle(ref, () => ({
+      open,
+      close,
+    }));
+
+    const durationAnimationsAtOpen: directionsDurationTypes = {
       left: 300,
       right: 300,
       down: 500,
       up: 500,
+      top: 500,
     };
 
-    const durationAnimationsAtClose = {
+    const durationAnimationsAtClose: directionsDurationTypes = {
       left: 200,
       right: 200,
       down: 360,
       up: 360,
+      top: 360,
     };
 
-    const slideUp = {
+    const slideUp: Animated.WithAnimatedValue<ViewStyle> = {
       transform: [
         {
           translateY: animation.interpolate({
@@ -124,7 +138,7 @@ const CustomModal = React.forwardRef<RefModalObject, CustomModalProps>(
       ],
     };
 
-    const slideDown = {
+    const slideDown: Animated.WithAnimatedValue<ViewStyle> = {
       transform: [
         {
           translateY: animation.interpolate({
@@ -136,7 +150,7 @@ const CustomModal = React.forwardRef<RefModalObject, CustomModalProps>(
       ],
     };
 
-    const slideLeft = {
+    const slideLeft: Animated.WithAnimatedValue<ViewStyle> = {
       transform: [
         {
           translateX: animation.interpolate({
@@ -148,7 +162,7 @@ const CustomModal = React.forwardRef<RefModalObject, CustomModalProps>(
       ],
     };
 
-    const slideRight = {
+    const slideRight: Animated.WithAnimatedValue<ViewStyle> = {
       transform: [
         {
           translateX: animation.interpolate({
@@ -160,7 +174,7 @@ const CustomModal = React.forwardRef<RefModalObject, CustomModalProps>(
       ],
     };
 
-    const bodyContentStyles = {
+    const bodyContentStyles: StyleProp<ViewStyle> = {
       flex: 1,
       marginHorizontal: 20,
       marginVertical: 50,
@@ -170,11 +184,12 @@ const CustomModal = React.forwardRef<RefModalObject, CustomModalProps>(
       maxHeight: height,
     };
 
-    const slideAnimations = {
+    const slideAnimations: SlideAnimationsTypes = {
       left: slideLeft,
       right: slideRight,
       down: slideDown,
       up: slideUp,
+      top: slideUp,
     };
 
     return (

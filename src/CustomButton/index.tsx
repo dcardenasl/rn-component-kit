@@ -4,8 +4,8 @@ import {
   TouchableOpacity,
   ViewStyle,
   TextStyle,
+  ColorValue,
 } from 'react-native';
-import {ColorTypes} from '../CustomModal';
 
 interface CustomButtonProps {
   children: ReactNode;
@@ -13,7 +13,7 @@ interface CustomButtonProps {
   disabled?: boolean;
   style?: ViewStyle | TextStyle;
   loading?: boolean;
-  backgroundColor?: ColorTypes;
+  backgroundColor?: ColorValue;
 }
 
 /**
